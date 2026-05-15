@@ -22,7 +22,7 @@ open(master_path, "w") do io
 end
 
 # ── Parallel outer loop ───────────────────────────────────────────────────────
-progress = Progress(N_INSTANCES; desc="Instances: ", showspeed=true)
+progress = Progress(N_INSTANCES * n_sweeps; desc="Instances: ", showspeed=true)
 ProgressMeter.update!(progress, 0)  # display at 0 before any thread completes
 
 t_start = time()
@@ -73,9 +73,8 @@ Threads.@threads for instance in 1:N_INSTANCES
                 write(io, "$instance,$nc,$obj_val,$solve_time\n")
             end
         end
+        next!(progress)  # thread-safe; replaces @info timing line if desired
     end
-
-    next!(progress)  # thread-safe; replaces @info timing line if desired
 end
 
 # # ── Aggregate to master CSV ───────────────────────────────────────────────────
