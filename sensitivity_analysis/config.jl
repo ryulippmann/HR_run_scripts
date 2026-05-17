@@ -4,7 +4,8 @@
 
 import HierarchicalRouting as HR
 using HierarchicalRouting
-using ProgressMeter
+using ProgressMeter,
+    Dates
 
 const SUBSET_PATH = "data/site/Moore_2024-02-14b_v060_rc1.gpkg"
 const BATHY_PATH = "data/env_constraints/bathy/Cairns-Cooktown_bathy.tif"

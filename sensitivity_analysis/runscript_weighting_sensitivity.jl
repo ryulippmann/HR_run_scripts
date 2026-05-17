@@ -28,6 +28,7 @@ open(master_path, "w") do io
 end
 
 # ── Parallel outer loop ───────────────────────────────────────────────────────
+@info "\nStart: $(Dates.now())"
 progress = Progress(N_INSTANCES * n_configs; desc="Instances: ", showspeed=true)
 ProgressMeter.update!(progress, 0)  # display at 0 before any thread completes
 
