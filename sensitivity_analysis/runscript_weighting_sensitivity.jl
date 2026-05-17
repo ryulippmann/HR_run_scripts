@@ -33,47 +33,50 @@ progress = Progress(N_INSTANCES * n_configs; desc="Instances: ", showspeed=true)
 ProgressMeter.update!(progress, 0)  # display at 0 before any thread completes
 
 t_start = time()
-Threads.@threads for instance in 1:N_INSTANCES
-    for (j, (w_ms, w_t)) in enumerate(WEIGHT_CONFIGS)
-        problem = HR.generate_randomised_problem(
-            SUBSET_PATH,
-            BATHY_PATH,
-            WAVE_DISTURBANCE_PATH,
-            DEPOT,
-            DRAFT_MS,
-            DRAFT_T,
-            w_ms,
-            w_t,
-            N_TENDERS,
-            T_CAP;
-            no_target_pts=N_TARGET_PTS,
-            points_buffer_dist=BUFFER_DIST,
-            debug_mode=false,
-            seed=instance,
-        )
+io = open(master_path, "a")
+try
+    Threads.@threads for instance in 1:N_INSTANCES
+        for (j, (w_ms, w_t)) in enumerate(WEIGHT_CONFIGS)
+            problem = HR.generate_randomised_problem(
+                SUBSET_PATH,
+                BATHY_PATH,
+                WAVE_DISTURBANCE_PATH,
+                DEPOT,
+                DRAFT_MS,
+                DRAFT_T,
+                w_ms,
+                w_t,
+                N_TENDERS,
+                T_CAP;
+                no_target_pts=N_TARGET_PTS,
+                points_buffer_dist=BUFFER_DIST,
+                debug_mode=false,
+                seed=instance,
+            )
 
-        t_solve = time()
+            t_solve = time()
 
-        soln = HR.solve(
-            problem;
-            waypoint_optim_method,
-            seed=SOLVE_SEED,
-            sa_improve_plot_flag=PLOT_FLAG,
-            wpt_optim_plot_flag=PLOT_FLAG,
-            soln_progress_plot_flag=PLOT_FLAG,
-            info_log=INFO_FLAG,
-        )
+            soln = HR.solve(
+                problem;
+                waypoint_optim_method,
+                seed=SOLVE_SEED,
+                sa_improve_plot_flag=PLOT_FLAG,
+                wpt_optim_plot_flag=PLOT_FLAG,
+                soln_progress_plot_flag=PLOT_FLAG,
+                info_log=INFO_FLAG,
+            )
 
-        solve_time = time() - t_solve
-        obj_val = HR.critical_path(soln, problem)
+            solve_time = time() - t_solve
+            obj_val = HR.critical_path(soln, problem)
 
-        lock(csv_lock) do
-            open(master_path, "a") do io
+            lock(csv_lock) do
                 write(io, "$instance,$w_ms,$w_t,$obj_val,$solve_time\n")
             end
         end
         next!(progress)  # thread-safe; replaces @info timing line if desired
     end
+finally
+    close(io)
 end
 
 # # ── Aggregate to master CSV ───────────────────────────────────────────────────
