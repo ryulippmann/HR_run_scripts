@@ -36,7 +36,7 @@ t_start = time()
 io = open(master_path, "a")
 try
     Threads.@threads for instance in 1:N_INSTANCES
-        for (j, (w_ms, w_t)) in enumerate(WEIGHT_CONFIGS)
+        for (w_ms, w_t) in WEIGHT_CONFIGS
             problem = HR.generate_randomised_problem(
                 SUBSET_PATH,
                 BATHY_PATH,

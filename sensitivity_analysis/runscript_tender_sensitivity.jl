@@ -30,7 +30,7 @@ t_start = time()
 io = open(master_path, "a")
 try
     Threads.@threads for instance in 1:N_INSTANCES
-        for (j, (n_tenders, t_cap)) in enumerate(TENDER_CONFIGS)
+        for (n_tenders, t_cap) in TENDER_CONFIGS
             problem = HR.generate_randomised_problem(
                 SUBSET_PATH,
                 BATHY_PATH,

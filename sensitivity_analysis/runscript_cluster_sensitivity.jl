@@ -54,7 +54,7 @@ try
             seed=instance,
         )
 
-        for (j, nc) in enumerate(CLUSTER_SWEEP)
+        for nc in CLUSTER_SWEEP
             t_solve = time()
 
             soln = HR.solve(
