@@ -65,10 +65,9 @@ try
             lock(csv_lock) do
                 write(io, "$instance,$n_tenders,$t_cap,$obj_val,$solve_time\n")
             end
+            next!(progress)
         end
-        next!(progress)  # thread-safe; replaces @info timing line if desired
     end
-    # @info "Instance $instance done | $(floor(Int, t ÷ 60))m $(round(Int, t % 60))s"
 finally
     close(io)
 end

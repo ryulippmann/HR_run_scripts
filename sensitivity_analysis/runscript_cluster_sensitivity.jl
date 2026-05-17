@@ -74,8 +74,8 @@ try
             lock(csv_lock) do
                 write(io, "$instance,$nc,$obj_val,$solve_time\n")
             end
+            next!(progress)
         end
-        next!(progress)  # thread-safe; replaces @info timing line if desired
     end
 finally
     close(io)
