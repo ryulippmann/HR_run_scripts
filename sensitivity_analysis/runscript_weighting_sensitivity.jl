@@ -12,10 +12,6 @@ const n_configs = length(WEIGHT_CONFIGS)
 const OUT_ROOT = "outputs/sensitivity/weightings"
 mkpath(OUT_ROOT)
 
-# Pre-allocate: one Vector per instance, written by its own thread
-# Columns: (instance, w_ms, w_t, obj_val)
-instance_results = Vector{Vector{Tuple{Int,Float64,Float64,Float64}}}(undef, N_INSTANCES)
-
 @info "Weighting sensitivity: $N_INSTANCES instances x $n_configs weight configs on $(Threads.nthreads()) threads"
 @info "Mothership weights: $WEIGHTS_MS"
 @info "Tender weights:     $WEIGHTS_T"
@@ -94,6 +90,11 @@ Threads.@threads for instance in 1:N_INSTANCES
 end
 
 # # ── Aggregate to master CSV ───────────────────────────────────────────────────
+# # Pre-allocate: one Vector per instance, written by its own thread
+# # Columns: (instance, w_ms, w_t, obj_val)
+# instance_results = Vector{Vector{Tuple{Int,Float64,Float64,Float64}}}(undef, N_INSTANCES)
+#
+#
 # master_path = joinpath(OUT_ROOT, "sensitivity_weightings.csv")
 # open(master_path, "w") do io
 #     write(io, "instance,w_ms,w_t,obj_val\n")
